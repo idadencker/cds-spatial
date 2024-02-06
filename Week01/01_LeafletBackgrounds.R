@@ -12,14 +12,16 @@ install.packages("googlesheets4")
 
 # Example with Markers
 library(leaflet)
+library(tidyverse)
 
 popup = c("Robin", "Jakub", "Jannes")
 
+
 leaflet() %>%
   addProviderTiles("Esri.WorldPhysical") %>% 
- #addProviderTiles("Esri.WorldImagery") %>% 
-  addAwesomeMarkers(lng = c(-3, 23, 11),
-                    lat = c(52, 53, 49), 
+ #addProviderTiles("Esri.WorldImagery") %>% #This is another type of map we could use, different from WorldPhysical
+  addAwesomeMarkers(lng = c(-3, 23, 11), #lng = longitude
+                    lat = c(52, 53, 49), #lat= latitude
                     popup = popup)
 
 
@@ -60,16 +62,18 @@ leaflet() %>%
 l_aus <- leaflet() %>%   # assign the base location to an object
   setView(151.2339084, -33.85089, zoom = 13)
 
+#Prepare the pop up box where we can choose for all the providers 
 esri <- grep("^Esri", providers, value = TRUE)
 
 for (provider in esri) {
   l_aus <- l_aus %>% addProviderTiles(provider, group = provider)
 }
 
+#Now display the map
 AUSmap <- l_aus %>%
-  addLayersControl(baseGroups = names(esri),
+  addLayersControl(baseGroups = names(esri), #Makes the pop up where we can choose what kind of map we want
                    options = layersControlOptions(collapsed = FALSE)) %>%
-  addMiniMap(tiles = esri[[1]], toggleDisplay = TRUE,
+  addMiniMap(tiles = esri[[1]], toggleDisplay = TRUE, #Adds the little minimap in the bottomright, can comment it out
              position = "bottomright") %>%
   addMeasure(
     position = "bottomleft",
