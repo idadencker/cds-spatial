@@ -67,7 +67,7 @@ esri <- grep("^Esri", providers, value = TRUE)
 
 for (provider in esri) {
   l_aus <- l_aus %>% addProviderTiles(provider, group = provider)
-}
+} 
 
 #Now display the map
 AUSmap <- l_aus %>%
@@ -96,23 +96,34 @@ AUSmap
 
 # Save map as a html document (optional, replacement of pushing the export button)
 # only works in root
-library(htmlwidgets) # from htmltools
+pacman::p_load(htmlwidgets) # from htmltools
 
+#saves in the working directory
 saveWidget(AUSmap, "AUSmap.html", selfcontained = TRUE)
+
 #########################################################
 #
 # Task 1: Create a Danish equivalent with esri layers, call it DKmap
+
+DKmap <- leaflet() %>%
+  addTiles() %>%
+  addProviderTiles("Esri.WorldImagery", 
+                   options = providerTileOptions(opacity=0.5)) %>% 
+  setView(lng = 10.19, lat = 56.14, zoom = 10)
+DKmap
+saveWidget(DKmap, "DKmap.html", selfcontained = TRUE)
+
 #
 # Task 2: Start collecting spatial data into a spreadsheet: https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=1817942479
 #
 #
 ################################## ADD DATA TO LEAFLET
 # Libraries
-library(tidyverse)
-library(googlesheets4)
-library(leaflet)
+pacman::p_load(tidyverse,googlesheets4,leaflet)
 
 # gs4_deauth() # if the authentication is not working for you
+
+gs4_deauth()
 
 places <- read_sheet("https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=1817942479",
                      range = "SA2024",
@@ -130,5 +141,20 @@ leaflet() %>%
 # Task 3: Read in the googlesheet data you and your colleagues populated with data and display it over your DKmap . 
 # The googlesheet is at https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=1817942479
 
+DKmap%>%
+  addMarkers(lng = places$Longitude, 
+             lat = places$Latitude,
+             popup = places$Description)
+
 #########################################################
 
+#Task 4: load in data about Chicago
+
+crime_data <- read_csv('/Users/idahelenedencker/Desktop/CognitiveScience/6. semester/Spatial analytics/git/cds-spatial/Week01/data/ChicagoCrimes2017.csv')
+
+leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(lng = crime_data$Longitude, 
+             lat = crime_data$Latitude,
+             popup = crime_data$`Primary Type`,
+             clusterOptions = 1 )
