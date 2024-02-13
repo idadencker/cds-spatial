@@ -131,10 +131,10 @@ places <- read_sheet("https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbq
 glimpse(places)
 
 leaflet() %>% 
-  addTiles() %>% 
-  addMarkers(lng = places$Longitude, 
-             lat = places$Latitude,
-             popup = places$Description)
+    addTiles() %>% 
+    addMarkers(lng = places$Longitude, 
+               lat = places$Latitude,
+               popup = places$Description)
 
 #########################################################
 #
